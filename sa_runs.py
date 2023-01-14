@@ -12,26 +12,55 @@ DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
-# for case in cases:
-# for step in np.arange(5, 50, 5):
-# for alpha in np.arange(0.1, 1.01, 0.05):
-for alpha in np.arange(0.81, 1.01, 0.01):
-    case = cases[0]
+inv = "case"
+
+# Set up correct list to iterate through
+if inv == "case":
+    indep = cases
+elif inv == "step":
+    indep = np.arange(5, 51, 5)
+elif inv == "alpha1":
+    indep = np.arange(0.1, 1.01, 0.05)
+elif inv == "alpha2":
+    indep = np.arange(0.8, 1.01, 0.01)
+else:
+    print("Error with investigating parameter")
+
+for ind in indep:
+    if inv == "case":
+        case = ind
+        step = 50
+        alpha = 0.9
+    elif inv == "step":
+        case = cases[0]
+        step = ind
+        alpha = 0.9
+    elif inv == "alpha1" or inv == "alpha2":
+        case = cases[0]
+        step = 50
+        alpha = ind
+    else:
+        pass
+
     gen = GEN[case[0]]
     t_mode = T_MODE[case[1]]
     cooling = COOLING[case[2]]
     dim = DIM[1]
-    step = 50
-    alpha = alpha
     sf = SF()
-    # filename = " ".join([gen, t_mode, cooling, str(step), str(dim)])
-    filename = " ".join(
-        [gen, t_mode, cooling,
-         str(step),
-         str(dim),
-         str(np.round(alpha, 3))])
+
+    if inv == "alpha":
+        filename = " ".join([
+            gen, t_mode, cooling,
+            str(step),
+            str(dim),
+            str(np.round(alpha, 3))
+        ])
+    else:
+        filename = " ".join([gen, t_mode, cooling, str(step), str(dim)])
+
     print("Running " + filename)
 
+    t_init = []
     best_x = []
     best_energy = []
     seeds = np.loadtxt("seeds.txt", dtype=int)
@@ -48,8 +77,9 @@ for alpha in np.arange(0.81, 1.01, 0.01):
                 alpha=alpha)
         best_x.append(sa.best_x)
         best_energy.append(sa.best_energy)
+        t_init.append(sa.t_init)
 
-    df_best = pd.DataFrame({"best_x": best_x, "best_energy": best_energy})
+    df_best = pd.DataFrame({"best_x": best_x, "best_energy": best_energy, "t_init": t_init})
     df_hist = pd.DataFrame(sa.hist_all, columns=["x", "energy", "accept", "t"])
 
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")

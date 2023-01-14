@@ -77,13 +77,18 @@ class SA:
             new_x = self.move()
             new_energy = self.cost_func(new_x)
             self.survey_energies.append(new_energy)
+            self.current_x = new_x
+        self.current_x = x0
 
         if self.t_mode == "W":  # White
-            self.t = np.std(self.survey_energies)
+            t = np.std(self.survey_energies)
         else:  # Kirkpatrick
             e = np.array(self.survey_energies)
             de = e[1:] - e[:-1]
-            self.t = -np.mean(de[de > 0]) / np.log(0.8)
+            t = -np.mean(de[de > 0]) / np.log(0.8)
+
+        self.t = t
+        self.t_init = t
 
         # Cooling schedule
         if self.cooling == "ECS":  # Exponential cooling schedule
