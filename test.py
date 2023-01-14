@@ -4,9 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# test = np.array([[420.9687, 420.9687], [0, 0]])
+# test = np.array([[420.9687, 420.9687], [0, 0], [-5, -5]])
 # sf = SF()
-# print(sf(test))
+# print(sf.cost_es(test))
 
 # def func(xx, yy):
 #     return -xx * np.sin(np.sqrt(np.abs(xx))) - yy * np.sin(np.sqrt(np.abs(yy)))

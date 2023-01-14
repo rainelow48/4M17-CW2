@@ -16,6 +16,7 @@ class SA:
                  cooling="ECS",
                  limit=(-500, 500),
                  alpha=0.9,
+                 alphaD=0.1,
                  omega=2.1,
                  evals_max=15000,
                  evals_survey=200):
@@ -39,6 +40,7 @@ class SA:
         # Solution generation parameters
         self.step = step
         self.alpha = alpha
+        self.alphaD = alphaD
         self.omega = omega
         self.D = np.ones(self.dim) * self.step
         self.R = np.zeros(self.dim)
@@ -183,7 +185,7 @@ class SA:
         # Update D if accepting new solution
         if accept:
             self.D = (1 -
-                      self.alpha) * self.D + self.alpha * self.omega * self.R
+                      self.alphaD) * self.D + self.alphaD * self.omega * self.R
         return accept
 
     # Cooling schemes:

@@ -57,7 +57,7 @@ class SF:
         f = np.sum(-x * np.sin(np.sqrt(np.abs(x))))
         return f
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def cost_es(self, x: np.ndarray) -> np.ndarray:
         '''Evaluate Schwefel's function at multiple points
         
         Parameters
