@@ -31,7 +31,7 @@ class SF:
         '''
         return np.amax(np.abs(x), axis=1) <= self.lim
 
-    def generate_feasible(self, dim: int, seed: int) -> np.ndarray:
+    def generate_feasible(self, dim: int) -> np.ndarray:
         '''Generate a random point in the feasible region
         Parameters
         ----------
@@ -41,7 +41,6 @@ class SF:
         -------
         x: A feasible point of the correct dimension
         '''
-        np.random.seed(seed)
         return np.random.uniform(-self.lim, self.lim, dim)
 
     def cost(self, x: np.ndarray) -> np.ndarray:
@@ -72,5 +71,5 @@ class SF:
 
         assert self.is_feasible(x).all() == True
 
-        f = np.sum(-x * np.sin(np.sqrt(np.abs(x))))
+        f = np.sum(-x * np.sin(np.sqrt(np.abs(x))), axis=1)
         return f

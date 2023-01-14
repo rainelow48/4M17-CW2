@@ -78,12 +78,12 @@ class SA:
             new_energy = self.cost_func(new_x)
             self.survey_energies.append(new_energy)
 
-        if self.t_mode == "KP":  # Kirkpatrick
+        if self.t_mode == "W":  # White
+            self.t = np.std(self.survey_energies)
+        else:  # Kirkpatrick
             e = np.array(self.survey_energies)
             de = e[1:] - e[:-1]
             self.t = -np.mean(de[de > 0]) / np.log(0.8)
-        else:  # White
-            self.t = np.std(self.survey_energies)
 
         # Cooling schedule
         if self.cooling == "ECS":  # Exponential cooling schedule
@@ -100,12 +100,12 @@ class SA:
         self.hist_energy.append(self.current_energy)
 
         while self.evals < self.evals_max:  # and solution is not improving
-            # # Termination criterion:
-            # # - No improvement within an entire markov chain at one temperature and
-            # # - Solution acceptance ratio falling below threshold 1e-3
-            # if self.Lk == self.Lk_max and self.new_best == False and self.accept / self.Lk <= 1e-3:
-            #     print("no improvement")
-            #     break
+            # Termination criterion:
+            # - No improvement within an entire markov chain at one temperature and
+            # - Solution acceptance ratio falling below threshold 1e-3
+            if self.Lk == self.Lk_max and self.new_best == False and self.accept / self.Lk <= 1e-3:
+                # print("no improvement")
+                break
 
             # Update temperature based on cooling schedule and reset counts
             if self.Lk >= self.Lk_max or self.accept >= self.accept_min:
