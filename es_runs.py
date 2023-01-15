@@ -41,8 +41,8 @@ for ind in indep:
         pass
 
     children_recomb = CHILDREN_RECOMB[case[0]]
-    sigma_recomb = SIGMA_RECOMB[case[0]]
-    select = SELECT[case[0]]
+    sigma_recomb = SIGMA_RECOMB[case[1]]
+    select = SELECT[case[2]]
     dim = DIM[1]
     sf = SF()
 
