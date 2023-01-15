@@ -13,13 +13,13 @@ DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
-inv = "case"
+inv = "step"
 
 # Set up correct list to iterate through
 if inv == "case":
     indep = cases
 elif inv == "step":
-    indep = np.arange(5, 51, 5)
+    indep = np.arange(55, 101, 5)
 elif inv == "alpha1":
     indep = np.arange(0.1, 1.01, 0.05)
 elif inv == "alpha2":
@@ -49,7 +49,7 @@ for ind in indep:
     dim = DIM[1]
     sf = SF()
 
-    if inv == "alpha":
+    if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([
             gen, t_mode, cooling,
             str(step),

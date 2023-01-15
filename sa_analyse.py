@@ -12,13 +12,14 @@ cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
 best = []
 hist = []
 
-inv = "case"
+invs = ['case', 'step', 'alpha1', 'alpha2']
+inv = invs[1]
 
 # Set up correct list to iterate through
 if inv == "case":
     indep = cases
 elif inv == "step":
-    indep = np.arange(5, 51, 5)
+    indep = np.arange(5, 101, 5)
 elif inv == "alpha1":
     indep = np.arange(0.1, 1.01, 0.05)
 elif inv == "alpha2":
@@ -46,7 +47,7 @@ for ind in indep:
     cooling = COOLING[case[2]]
     dim = DIM[1]
 
-    if inv == "alpha":
+    if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([
             gen, t_mode, cooling,
             str(step),
@@ -66,16 +67,24 @@ analysis = []
 for i, df_case_best in enumerate(best):
     be = df_case_best['best_energy']
     t = df_case_best['t_init']
+    rt = df_case_best['running_time']
     energy_ave = pd.DataFrame.mean(be)
     energy_std = pd.DataFrame.std(be)
     t_ave = pd.DataFrame.mean(t)
     t_std = pd.DataFrame.std(t)
-    
-    x_best, energy_best, best_t_init = pd.DataFrame.min(df_case_best)
-    analysis.append([energy_ave, energy_std, energy_best, x_best, t_ave, t_std])
+    rt_ave = pd.DataFrame.mean(rt)
+    rt_std = pd.DataFrame.std(rt)
+
+    x_best, energy_best, best_t_init = pd.DataFrame.min(df_case_best)[:-1]
+    analysis.append([
+        energy_ave, energy_std, energy_best, x_best, t_ave, t_std, rt_ave,
+        rt_std
+    ])
     print(i, energy_ave, energy_std, x_best, energy_best)
 
-df_an = pd.DataFrame(
-    np.array(analysis),
-    columns=["evergy_ave", "energy_std", "energy_best", "x_best", "t_ave", "t_std"])
+df_an = pd.DataFrame(np.array(analysis),
+                     columns=[
+                         "energy_ave", "energy_std", "energy_best", "x_best",
+                         "t_ave", "t_std", "rt_ave", "rt_std"
+                     ])
 pd.DataFrame.to_csv(df_an, DEST + "Analysis\\" + inv)
