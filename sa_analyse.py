@@ -45,7 +45,7 @@ for ind in indep:
     gen = GEN[case[0]]
     t_mode = T_MODE[case[1]]
     cooling = COOLING[case[2]]
-    dim = DIM[0]
+    dim = DIM[1]
 
     if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([
