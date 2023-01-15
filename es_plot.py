@@ -2,51 +2,38 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Results\\"
+DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Results-ES\\"
 FIG_DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Figures\\"
 FIGSIZE = (7, 5)
 FIGSIZE2 = (6.5, 5)
-GEN = ["C", "D"]
-T_MODE = ["W", "KP"]
-COOLING = ["ECS", "ACS"]
+CHILDREN_RECOMB = ["D", "GD"]
+SIGMA_RECOMB = ["I", "GI"]
+SELECT = ["NE", "E"]
 DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
 
 def plot_MO_RT():
-    invs = ['case', 'step', 'alpha1', 'alpha2']
+    invs = ['case', 'mu']
 
     for inv in invs:
         df_an = pd.read_csv(DEST + "Analysis\\" + inv, index_col=0)
-        e_ave = df_an["energy_ave"]
-        e_std = df_an['energy_std']
+        be_ave = df_an['be_ave']
+        be_std = df_an['be_std']
         rt_ave = df_an['rt_ave']
         rt_std = df_an['rt_std']
 
         if inv == 'case':
             x = np.arange(0, 8, 1)
             xlabel = "Experiment number"
-            title = "(SA case)"
+            title = "(ES case)"
             color = 'b'
-
-        elif inv == 'step':
+        elif inv == 'mu':
             x = np.arange(5, 101, 5)
-            xlabel = "Step"
-            title = "(SA step)"
-            color = 'r'
-
-        elif inv == 'alpha1':
-            x = np.arange(0.1, 1.01, 0.05)
-            xlabel = "Alpha"
-            title = "(SA alpha)"
-            color = 'g'
-
-        elif inv == 'alpha2':
-            x = np.arange(0.8, 1.01, 0.01)
-            xlabel = "Alpha"
-            title = "(SA alpha)"
-            color = 'g'
+            xlabel = "Parent population size $\mu$"
+            title = "(ES mu)"
+            color = 'b'
 
         # Plot average objective
         plt.rcParams['figure.figsize'] = FIGSIZE
@@ -56,8 +43,8 @@ def plot_MO_RT():
         ylabel_RT = "Average running times (50 runs)"
 
         plt.bar(x,
-                e_ave,
-                yerr=e_std,
+                be_ave,
+                yerr=be_std,
                 color=color,
                 width=0.8 * (x[1] - x[0]),
                 align='center',
@@ -67,7 +54,7 @@ def plot_MO_RT():
         plt.title(title_MO + title, fontsize=14)
         plt.xlabel(xlabel, fontsize=11)
         plt.ylabel(ylabel_MO, fontsize=11)
-        plt.savefig(FIG_DEST + "SA " + inv + " MO",
+        plt.savefig(FIG_DEST + "ES " + inv + " MO",
                     transparent=True,
                     bbox_inches='tight')
         plt.clf()
@@ -85,28 +72,28 @@ def plot_MO_RT():
         plt.title(title_RT + title, fontsize=14)
         plt.xlabel(xlabel, fontsize=11)
         plt.ylabel(ylabel_RT, fontsize=11)
-        plt.savefig(FIG_DEST + "SA " + inv + " RT",
+        plt.savefig(FIG_DEST + "ES " + inv + " RT",
                     transparent=True,
                     bbox_inches='tight')
         plt.clf()
 
 
-def plot_obj_temp(params):
-    df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
-    accepted = df_hist[df_hist['accept'] == True]
-    obj = accepted['energy']
-    t = accepted['t']
+def plot_ave_min(params):
+    df_best = pd.read_csv(DEST + params + " best", index_col=0)
+    x = df_best['population']
+    be = df_best['best_energy']
+    e_ave = df_best['ave_energy']
 
     fig, ax1 = plt.subplots(figsize=FIGSIZE)
     ax2 = ax1.twinx()
-    ax1.plot(obj, 'b')
-    ax2.plot(t, 'r')
-    ax1.set_ylabel("Objective", color='b', fontsize=11)
-    ax2.set_ylabel("Temperature", color='r', fontsize=11)
-    ax1.set_xlabel('Iterations', fontsize=11)
-    plt.title("Objective/Temperature against Iterations (" + params[:-2] + ")",
+    ax1.plot(x, e_ave, 'b')
+    ax2.plot(x, be, 'r')
+    ax1.set_ylabel("Average Objective", color='b', fontsize=11)
+    ax2.set_ylabel("Minimum Objective", color='r', fontsize=11)
+    ax1.set_xlabel('Generations', fontsize=11)
+    plt.title("Average/Minimum Objective against Generations (" + params + ")",
               fontsize=14)
-    plt.savefig(FIG_DEST + "SA " + params,
+    plt.savefig(FIG_DEST + "ES " + params[:-2],
                 transparent=True,
                 bbox_inches='tight')
     plt.clf()
@@ -116,11 +103,12 @@ def func(xx, yy):
     return -xx * np.sin(np.sqrt(np.abs(xx))) - yy * np.sin(np.sqrt(np.abs(yy)))
 
 
-def plot_path(params):
-    df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
-    accepted = df_hist[df_hist['accept'] == True]
-    x1 = np.array(accepted['x1'])[::25]
-    x2 = np.array(accepted['x2'])[::25]
+# 2D-SF only
+def plot_gens(params):
+    # df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
+    # accepted = df_hist[df_hist['accept'] == True]
+    # x1 = np.array(accepted['x1'])[::25]
+    # x2 = np.array(accepted['x2'])[::25]
 
     x = np.linspace(-500, 500, 1001)
     y = np.linspace(-500, 500, 1001)
@@ -130,14 +118,14 @@ def plot_path(params):
     plt.rcParams['figure.figsize'] = FIGSIZE2
     plt.contourf(xx, yy, zz)
     plt.colorbar()
-    plt.plot(x1, x2, '--xk', label="Best solution")
-    plt.plot(x1[0], x2[0], '^', color='orange', label="Start")
-    plt.plot(x1[-1], x2[-1], 'or', label="End")
-    plt.legend(ncol=3, loc="lower center")
+    # plt.plot(x1, x2, '--xk', label="Best solution")
+    # plt.plot(x1[0], x2[0], '^', color='orange', label="Start")
+    # plt.plot(x1[-1], x2[-1], 'or', label="End")
+    # plt.legend(ncol=3, loc="lower center")
     plt.xlabel("x2", fontsize=11)
     plt.ylabel("x1", fontsize=11)
-    plt.title("Path taken (" + params[:-2] + ")", fontsize=14)
-    plt.savefig(FIG_DEST + "SA path " + params,
+    # plt.title("Path taken (" + params[:-2] + ")", fontsize=14)
+    plt.savefig(FIG_DEST + "ES path " + params,
                 transparent=True,
                 bbox_inches='tight')
     plt.clf()
@@ -146,27 +134,38 @@ def plot_path(params):
 def main():
     # 2D-SF
     for case in cases:
-        gen = GEN[case[0]]
-        t_mode = T_MODE[case[1]]
-        cooling = COOLING[case[2]]
-        step = 50
+        children_recomb = CHILDREN_RECOMB[case[0]]
+        sigma_recomb = SIGMA_RECOMB[case[1]]
+        select = SELECT[case[2]]
         dim = DIM[0]
-        filename = " ".join([gen, t_mode, cooling, str(step), str(dim)])
-        plot_obj_temp(filename)
-        plot_path(filename)
+        mu = 20
+        l_mul = 7
+        filename = " ".join([
+            children_recomb, sigma_recomb, select,
+            str(mu),
+            str(l_mul),
+            str(dim)
+        ])
+        plot_ave_min(filename)
+        plot_gens(filename)
 
     # 6D-SF
-    plot_MO_RT() # Plot minimum objective and running times
+    plot_MO_RT()  # Plot minimum objective and running times
 
-    # Plot objective and temperature against iterations
     for case in cases:
-        gen = GEN[case[0]]
-        t_mode = T_MODE[case[1]]
-        cooling = COOLING[case[2]]
-        step = 50
+        children_recomb = CHILDREN_RECOMB[case[0]]
+        sigma_recomb = SIGMA_RECOMB[case[1]]
+        select = SELECT[case[2]]
         dim = DIM[1]
-        filename = " ".join([gen, t_mode, cooling, str(step), str(dim)])
-        plot_obj_temp(filename)
+        mu = 20
+        l_mul = 7
+        filename = " ".join([
+            children_recomb, sigma_recomb, select,
+            str(mu),
+            str(l_mul),
+            str(dim)
+        ])
+        plot_ave_min(filename)
 
 
 if __name__ == "__main__":

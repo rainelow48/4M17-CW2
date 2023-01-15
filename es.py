@@ -88,7 +88,9 @@ class ES:
         # Update best and archive
         self.best_x = self.parents[0]
         self.best_energy = self.parents_energy[0]
-        self.best.append((self.population, self.best_x, self.best_energy))
+        self.ave_energy = np.mean(self.parents_energy)
+        self.best.append(
+            (self.population, self.best_x, self.best_energy, self.ave_energy))
         self.hist.append((self.population, self.parents, self.parents_energy,
                           self.parents_sigma))
 
@@ -103,7 +105,9 @@ class ES:
             # Get best parent and archive
             self.best_x = self.parents[0]
             self.best_energy = self.parents_energy[0]
-            self.best.append((self.population, self.best_x, self.best_energy))
+            self.ave_energy = np.mean(self.parents_energy)
+            self.best.append((self.population, self.best_x, self.best_energy,
+                              self.ave_energy))
             self.hist.append((self.population, self.parents,
                               self.parents_energy, self.parents_sigma))
 

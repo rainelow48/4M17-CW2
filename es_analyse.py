@@ -10,13 +10,13 @@ DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
-inv = "case"
+inv = "mu"
 
 # Set up correct list to iterate through
 if inv == "case":
     indep = cases
 elif inv == "mu":
-    indep = np.arange(10, 51, 5)
+    indep = np.arange(5, 101, 5)
 elif inv == "l_mul":
     indep = np.arange(5, 11, 1)
 else:
@@ -46,7 +46,9 @@ for ind in indep:
 
     filename = " ".join(
         [children_recomb, sigma_recomb, select,
-         str(mu), str(l_mul)])
+         str(mu),
+         str(l_mul),
+         str(dim)])
 
     df_runs = pd.read_csv(DEST + filename + " runs", index_col=0)
     runs.append(df_runs)

@@ -13,13 +13,13 @@ DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
-inv = "case"
+inv = "mu"
 
 # Set up correct list to iterate through
 if inv == "case":
     indep = cases
 elif inv == "mu":
-    indep = np.arange(10, 51, 5)
+    indep = np.arange(5, 101, 5)
 elif inv == "l_mul":
     indep = np.arange(5, 11, 1)
 else:
@@ -49,7 +49,9 @@ for ind in indep:
 
     filename = " ".join(
         [children_recomb, sigma_recomb, select,
-         str(mu), str(l_mul)])
+         str(mu),
+         str(l_mul),
+         str(dim)])
     print("Running " + filename)
 
     population = []
@@ -68,7 +70,7 @@ for ind in indep:
         end = datetime.now()
         running_time = timedelta.total_seconds(end - start)
 
-        p, bx, be = es.best[-1]
+        p, bx, be, e_ave = es.best[-1]
         population.append(p)
         best_x.append(bx)
         best_energy.append(be)
@@ -80,8 +82,15 @@ for ind in indep:
         "best_energy": best_energy,
         "running_time": running_times
     })
-    df_best = pd.DataFrame(es.best,
-                           columns=["population", "best_x", "best_energy"])
+    df_best = pd.DataFrame(
+        es.best, columns=["population", "best_x", "best_energy", "ave_energy"])
+
+    if dim == 2:
+        population, parents, parents_energy, parents_sigma = zip(*es.hist)
+        ps = np.array([np.array(i).T.ravel() for i in parents])
+        df_parents = pd.DataFrame(ps)
+        pd.DataFrame.to_csv(df_parents, DEST + filename + " parents")
+
     df_hist = pd.DataFrame(
         es.hist,
         columns=["population", "parents", "parents_energy", "parents_sigma"])
