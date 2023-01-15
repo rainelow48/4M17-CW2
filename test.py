@@ -4,6 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+a = np.array([[1, 2], [2, 3], [3, 4]])
+b = np.array([[5, 6], [6, 7]])
+
+c = np.vstack((a, b))
+print(a)
+print(b)
+print(np.shape(a))
+print(np.shape(b))
+print(c)
 # test = np.array([[420.9687, 420.9687], [0, 0], [-5, -5]])
 # sf = SF()
 # print(sf.cost_es(test))

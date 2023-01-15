@@ -13,7 +13,7 @@ class ES:
                  sigma_recomb='I',
                  select='NE',
                  mu=20,
-                 l=140,
+                 l_mul=7,
                  e=0.01,
                  omega=0.5,
                  limit=(-500, 500),
@@ -31,8 +31,8 @@ class ES:
 
         # Optimisation parameters
         self.mu = mu
-        self.l = l
-        self.chi0 = np.random.normal
+        self.l = l_mul * self.mu
+        self.chi0 = np.random.normal()
         self.chis = np.random.normal(size=self.dim)
         self.omega = omega
         self.tau = 1 / np.sqrt(2 * np.sqrt(self.dim))
@@ -68,7 +68,8 @@ class ES:
         parents = []
         for i in range(mu):
             parent = self.generate_feasible()
-            while parent in parents:
+            while i != 0 and np.any(np.all(parent == parents, axis=1)):
+                # Parent already in parents list, ignoring first parent
                 parent = self.generate_feasible()
             parents.append(parent)
 
@@ -82,23 +83,38 @@ class ES:
 
         # Archives
         self.hist = []
+        self.best = []
+
+        # Update best and archive
+        self.best_x = self.parents[0]
+        self.best_energy = self.parents_energy[0]
+        self.best.append((self.population, self.best_x, self.best_energy))
+        self.hist.append((self.population, self.parents, self.parents_energy,
+                          self.parents_sigma))
 
         while self.evals < self.evals_max and self.converge == False:
             # Generate children
             self.generate_children()
 
-            # Select parents
+            # Select and sort parents
             self.select()
             self.population += 1
 
-            # # Get best TODO!!!
-            # self.best = np.min()
+            # Get best parent and archive
+            self.best_x = self.parents[0]
+            self.best_energy = self.parents_energy[0]
+            self.best.append((self.population, self.best_x, self.best_energy))
+            self.hist.append((self.population, self.parents,
+                              self.parents_energy, self.parents_sigma))
 
-            # # Archiving
-            # self.hist.append((self.population, self.parents))
+            # Check convergence
+            self.check_convergence()
 
     def generate_feasible(self):
         return np.random.uniform(self.lower, self.upper, self.dim)
+
+    def is_feasible(self, child):
+        return np.min(child) > self.lower and np.max(child) < self.upper
 
     def sort_population(self, population, energy, sigma):
         sorted_ind = np.argsort(energy)
@@ -159,8 +175,7 @@ class ES:
         mutate_child = child + n
 
         # Reject mutation if mutated_child is not in feasible region
-        if np.min(mutate_child) < self.lower or np.max(
-                mutate_child) > self.upper:
+        if not self.is_feasible(mutate_child):
             mutate_child = child
 
         return mutate_child, child_sigma
@@ -174,9 +189,9 @@ class ES:
         self.parents_sigma = sorted_sigma[:self.mu]
 
     def select_elitist(self):
-        population = np.vstack((self.children, self.parents))
-        energy = np.vstack((self.children_energy, self.parents_energy))
-        sigma = np.vstack((self.children_sigma, self.parents_sigma))
+        population = np.concatenate((self.children, self.parents))
+        energy = np.concatenate((self.children_energy, self.parents_energy))
+        sigma = np.concatenate((self.children_sigma, self.parents_sigma))
         sorted_population, sorted_energy, sorted_sigma = self.sort_population(
             population, energy, sigma)
         self.parents = sorted_population[:self.mu]
