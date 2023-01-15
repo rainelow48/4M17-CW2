@@ -13,7 +13,7 @@ best = []
 hist = []
 
 invs = ['case', 'step', 'alpha1', 'alpha2']
-inv = invs[1]
+inv = invs[0]
 
 # Set up correct list to iterate through
 if inv == "case":
@@ -45,7 +45,7 @@ for ind in indep:
     gen = GEN[case[0]]
     t_mode = T_MODE[case[1]]
     cooling = COOLING[case[2]]
-    dim = DIM[1]
+    dim = DIM[0]
 
     if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([

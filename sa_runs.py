@@ -13,7 +13,7 @@ DIM = [2, 6]
 cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
-inv = "step"
+inv = "case"
 
 # Set up correct list to iterate through
 if inv == "case":
@@ -92,7 +92,19 @@ for ind in indep:
         "t_init": t_init,
         "running_time": running_times
     })
-    df_hist = pd.DataFrame(sa.hist_all, columns=["x", "energy", "accept", "t"])
+    if dim == 2:
+        x, energy, accept, t = zip(*sa.hist_all)
+        xs = np.array(x)
+        df_hist = pd.DataFrame({
+            'x1': xs[:, 0],
+            'x2': xs[:, 1],
+            'energy': energy,
+            'accept': accept,
+            't': t
+        })
+    else:
+        df_hist = pd.DataFrame(sa.hist_all,
+                               columns=["x", "energy", "accept", "t"])
 
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")
     pd.DataFrame.to_csv(df_hist, DEST + filename + " hist")

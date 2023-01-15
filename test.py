@@ -14,7 +14,7 @@ print(np.shape(a))
 print(np.shape(b))
 print(c)
 # test = np.array([[420.9687, 420.9687], [0, 0], [-5, -5]])
-# sf = SF()
+sf = SF()
 # print(sf.cost_es(test))
 
 # def func(xx, yy):
@@ -33,25 +33,25 @@ print(c)
 # plt.colorbar()
 # plt.show()
 
-# dim = 2
-# seeds = np.loadtxt("seeds.txt", dtype=int)
-# x0 = sf.generate_feasible(dim=dim, seed=seeds[0])
-# sa = SA(x0=x0,
-#         func=sf.cost,
-#         dim=dim,
-#         step=50,
-#         gen="C",
-#         t_mode="W",
-#         cooling="ECS")
+dim = 2
+seeds = np.loadtxt("seeds.txt", dtype=int)
+x0 = sf.generate_feasible(dim=dim)
+sa = SA(x0=x0,
+        func=sf.cost,
+        dim=dim,
+        step=50,
+        gen="C",
+        t_mode="W",
+        cooling="ECS")
 
-# print(sa.best_energy, sa.best_x)
-# print(np.shape(sa.hist_accepted))
-# hist_accepted = pd.DataFrame(sa.hist_accepted,
-#                              columns=['x', 'energy', 'accepted', 'temp'])
-# hist_all = pd.DataFrame(sa.hist_all,
-#                         columns=['x', 'energy', 'accepted', 'temp'])
-# print(hist_accepted['x'])
-# xs = hist_accepted['x'].to_numpy()
+print(sa.best_energy, sa.best_x)
+print(np.shape(sa.hist_accepted))
+hist_accepted = pd.DataFrame(sa.hist_accepted,
+                             columns=['x', 'energy', 'accepted', 'temp'])
+hist_all = pd.DataFrame(sa.hist_all,
+                        columns=['x', 'energy', 'accepted', 'temp'])
+print(hist_accepted['x'])
+xs = hist_accepted['x'].to_numpy()
 
 # a, b = zip(*xs)
 # print(len(a), len(b))
