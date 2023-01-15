@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sf import SF
 from sa import SA
+from datetime import datetime, timedelta
 
 DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Results\\"
 GEN = ["C", "D"]
@@ -63,10 +64,12 @@ for ind in indep:
     t_init = []
     best_x = []
     best_energy = []
+    running_times = []
     seeds = np.loadtxt("seeds.txt", dtype=int)
     for seed in seeds:
         np.random.seed(seed)
         x0 = sf.generate_feasible(dim=dim)
+        start = datetime.now()
         sa = SA(x0=x0,
                 func=sf.cost,
                 dim=dim,
@@ -75,11 +78,20 @@ for ind in indep:
                 t_mode=t_mode,
                 cooling=cooling,
                 alpha=alpha)
+        end = datetime.now()
+        running_time = timedelta.total_seconds(end - start)
+
         best_x.append(sa.best_x)
         best_energy.append(sa.best_energy)
         t_init.append(sa.t_init)
+        running_times.append(running_time)
 
-    df_best = pd.DataFrame({"best_x": best_x, "best_energy": best_energy, "t_init": t_init})
+    df_best = pd.DataFrame({
+        "best_x": best_x,
+        "best_energy": best_energy,
+        "t_init": t_init,
+        "running_time": running_times
+    })
     df_hist = pd.DataFrame(sa.hist_all, columns=["x", "energy", "accept", "t"])
 
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")

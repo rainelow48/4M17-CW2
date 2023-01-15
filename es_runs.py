@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sf import SF
 from es import ES
+from datetime import datetime, timedelta
 
 DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Results-ES\\"
 CHILDREN_RECOMB = ["D", "GD"]
@@ -51,19 +52,40 @@ for ind in indep:
          str(mu), str(l_mul)])
     print("Running " + filename)
 
-    es = ES(func=sf.cost_es,
-            dim=dim,
-            children_recomb=children_recomb,
-            sigma_recomb=sigma_recomb,
-            select=select,
-            mu=mu,
-            l_mul=l_mul)
+    population = []
+    best_x = []
+    best_energy = []
+    running_times = []
+    for i in range(50):
+        start = datetime.now()
+        es = ES(func=sf.cost_es,
+                dim=dim,
+                children_recomb=children_recomb,
+                sigma_recomb=sigma_recomb,
+                select=select,
+                mu=mu,
+                l_mul=l_mul)
+        end = datetime.now()
+        running_time = timedelta.total_seconds(end - start)
 
+        p, bx, be = es.best[-1]
+        population.append(p)
+        best_x.append(bx)
+        best_energy.append(be)
+        running_times.append(running_time)
+
+    df_runs = pd.DataFrame({
+        "population": population,
+        "best_x": best_x,
+        "best_energy": best_energy,
+        "running_time": running_times
+    })
     df_best = pd.DataFrame(es.best,
                            columns=["population", "best_x", "best_energy"])
     df_hist = pd.DataFrame(
         es.hist,
         columns=["population", "parents", "parents_energy", "parents_sigma"])
 
+    pd.DataFrame.to_csv(df_runs, DEST + filename + " runs")
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")
     pd.DataFrame.to_csv(df_hist, DEST + filename + " hist")
