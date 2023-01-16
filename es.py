@@ -70,7 +70,9 @@ class ES:
         seeds_es = np.loadtxt("seeds_es.txt", dtype=int)
         reverse = 1
         for i in range(mu):
-            seeds_es += np.random.randint(seed)
+            np.random.seed(seed)
+            rand = np.random.randint(100)
+            seeds_es += np.random.randint(rand)
             np.random.seed(seeds_es[i])
             parent = self.generate_feasible()
             while i != 0 and np.any(np.all(parent == parents, axis=1)):
