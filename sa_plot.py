@@ -119,8 +119,9 @@ def func(xx, yy):
 def plot_path(params):
     df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
     accepted = df_hist[df_hist['accept'] == True]
-    x1 = np.array(accepted['x1'])[::25]
-    x2 = np.array(accepted['x2'])[::25]
+    step = 50
+    x1 = np.array(accepted['x1'])
+    x2 = np.array(accepted['x2'])
 
     x = np.linspace(-500, 500, 1001)
     y = np.linspace(-500, 500, 1001)
@@ -130,8 +131,8 @@ def plot_path(params):
     plt.rcParams['figure.figsize'] = FIGSIZE2
     plt.contourf(xx, yy, zz)
     plt.colorbar()
-    plt.plot(x1, x2, '--xk', label="Best solution")
-    plt.plot(x1[0], x2[0], '^', color='orange', label="Start")
+    plt.plot(x1[::step], x2[::step], '--xk', label="Best solution")
+    plt.plot(x1[::step][0], x2[::step][0], '^', color='orange', label="Start")
     plt.plot(x1[-1], x2[-1], 'or', label="End")
     plt.legend(ncol=3, loc="lower center")
     plt.xlabel("x2", fontsize=11)
@@ -156,7 +157,7 @@ def main():
         plot_path(filename)
 
     # 6D-SF
-    plot_MO_RT() # Plot minimum objective and running times
+    plot_MO_RT()  # Plot minimum objective and running times
 
     # Plot objective and temperature against iterations
     for case in cases:

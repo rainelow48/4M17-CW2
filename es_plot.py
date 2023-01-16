@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Results-ES\\"
 FIG_DEST = "C:\\D\\Cambridge\\Part IIB\\Coursework\\4M17 Practical Optimisation\\4M17-CW2\\Figures\\"
 FIGSIZE = (7, 5)
-FIGSIZE2 = (6.5, 5)
+FIGSIZE2 = (16, 5)
 CHILDREN_RECOMB = ["D", "GD"]
 SIGMA_RECOMB = ["I", "GI"]
 SELECT = ["NE", "E"]
@@ -104,31 +104,51 @@ def func(xx, yy):
 
 
 # 2D-SF only
-def plot_gens(params):
-    # df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
-    # accepted = df_hist[df_hist['accept'] == True]
-    # x1 = np.array(accepted['x1'])[::25]
-    # x2 = np.array(accepted['x2'])[::25]
+def plot_gens(params, mu):
+    df_parents = pd.read_csv(DEST + params + " parents", index_col=0)
+    parents = np.array(df_parents)
+    generations = len(parents)
+    mid = 2
+    end = 4
+    start_gen = parents[0]
+    mid_gen = parents[mid]
+    final_gen = parents[end]
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1,
+                                        3,
+                                        sharex=True,
+                                        sharey=True,
+                                        figsize=FIGSIZE2)
 
     x = np.linspace(-500, 500, 1001)
     y = np.linspace(-500, 500, 1001)
     xx, yy = np.meshgrid(x, y)
     zz = func(xx, yy)
 
-    plt.rcParams['figure.figsize'] = FIGSIZE2
-    plt.contourf(xx, yy, zz)
-    plt.colorbar()
-    # plt.plot(x1, x2, '--xk', label="Best solution")
-    # plt.plot(x1[0], x2[0], '^', color='orange', label="Start")
-    # plt.plot(x1[-1], x2[-1], 'or', label="End")
-    # plt.legend(ncol=3, loc="lower center")
-    plt.xlabel("x2", fontsize=11)
-    plt.ylabel("x1", fontsize=11)
-    # plt.title("Path taken (" + params[:-2] + ")", fontsize=14)
-    plt.savefig(FIG_DEST + "ES path " + params,
+    pcm = ax1.contourf(xx, yy, zz)
+    ax1.plot(start_gen[:mu], start_gen[mu:], 'or')
+    ax1.set_title("Generation 1")
+    ax2.contourf(xx, yy, zz)
+    ax2.plot(mid_gen[:mu], mid_gen[mu:], 'or')
+    ax2.set_title("Generation " + str(mid))
+    ax3.contourf(xx, yy, zz)
+    ax3.plot(final_gen[:mu], final_gen[mu:], 'or')
+    ax3.set_title("Generation " + str(end))
+
+    ax1.set_xlabel("x2", fontsize=11)
+    ax2.set_xlabel("x2", fontsize=11)
+    ax3.set_xlabel("x2", fontsize=11)
+    ax1.set_ylabel("x1", fontsize=11)
+
+    ax4 = fig.add_axes([0.93, 0.1, 0.01, 0.8])
+    fig.colorbar(pcm, cax=ax4)
+    fig.suptitle("Population Evolution with Generations (" + params[:-2] + ")",
+                 fontsize=14)
+
+    fig.savefig(FIG_DEST + "ES path " + params,
                 transparent=True,
                 bbox_inches='tight')
-    plt.clf()
+    # fig.clf()
 
 
 def main():
@@ -147,7 +167,7 @@ def main():
             str(dim)
         ])
         plot_ave_min(filename)
-        plot_gens(filename)
+        plot_gens(filename, mu)
 
     # 6D-SF
     plot_MO_RT()  # Plot minimum objective and running times
