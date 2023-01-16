@@ -58,10 +58,13 @@ for ind in indep:
     best_x = []
     best_energy = []
     running_times = []
+    seeds_50 = np.loadtxt('seeds.txt', dtype=int)
     for i in range(50):
+        seed = seeds_50[i]
         start = datetime.now()
         es = ES(func=sf.cost_es,
                 dim=dim,
+                seed=seed,
                 children_recomb=children_recomb,
                 sigma_recomb=sigma_recomb,
                 select=select,

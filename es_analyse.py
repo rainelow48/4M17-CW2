@@ -42,7 +42,7 @@ for ind in indep:
     children_recomb = CHILDREN_RECOMB[case[0]]
     sigma_recomb = SIGMA_RECOMB[case[1]]
     select = SELECT[case[2]]
-    dim = DIM[1]
+    dim = DIM[1]  # Dont change!!
 
     filename = " ".join(
         [children_recomb, sigma_recomb, select,

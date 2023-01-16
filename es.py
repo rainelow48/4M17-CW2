@@ -9,6 +9,7 @@ class ES:
     def __init__(self,
                  func,
                  dim,
+                 seed,
                  children_recomb='D',
                  sigma_recomb='I',
                  select='NE',
@@ -66,10 +67,16 @@ class ES:
 
         # Initialise parent population and sort by energy
         parents = []
+        seeds_es = np.loadtxt("seeds_es.txt", dtype=int)
+        reverse = 1
         for i in range(mu):
+            seeds_es += np.random.randint(seed)
+            np.random.seed(seeds_es[i])
             parent = self.generate_feasible()
             while i != 0 and np.any(np.all(parent == parents, axis=1)):
                 # Parent already in parents list, ignoring first parent
+                np.random.seed(seeds_es[-reverse])
+                reverse += 1
                 parent = self.generate_feasible()
             parents.append(parent)
 

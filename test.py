@@ -88,10 +88,10 @@ xs = hist_accepted['x'].to_numpy()
 # plt.show()
 
 # Generate unique seeds for evaluations
-# seeds = []
-# for i in range(50):
-#     seeds.append(np.random.randint(0, 10000))
+seeds = []
+for i in range(200):
+    seeds.append(np.random.randint(0, 10000))
 
-# if len(set(seeds)) == 50:
-#     print("saving...")
-#     np.savetxt("seeds.txt", np.array(seeds, dtype=int))
+if len(set(seeds)) == 200:
+    print("saving...")
+    np.savetxt("seeds_es.txt", np.array(seeds, dtype=int))
