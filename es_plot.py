@@ -169,8 +169,12 @@ def main():
         plot_ave_min(filename)
         plot_gens(filename, mu)
 
+    plt.clf()
+    plt.close('all')
+
     # 6D-SF
     plot_MO_RT()  # Plot minimum objective and running times
+    plt.close('all')
 
     for case in cases:
         children_recomb = CHILDREN_RECOMB[case[0]]
