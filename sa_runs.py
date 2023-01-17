@@ -19,7 +19,7 @@ inv = "case"
 if inv == "case":
     indep = cases
 elif inv == "step":
-    indep = np.arange(55, 101, 5)
+    indep = np.arange(5, 101, 5)
 elif inv == "alpha1":
     indep = np.arange(0.1, 1.01, 0.05)
 elif inv == "alpha2":
@@ -27,6 +27,7 @@ elif inv == "alpha2":
 else:
     print("Error with investigating parameter")
 
+# Run through list with varying independent variable
 for ind in indep:
     if inv == "case":
         case = ind
@@ -49,6 +50,7 @@ for ind in indep:
     dim = DIM[1]
     sf = SF()
 
+    # Set up correct file name
     if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([
             gen, t_mode, cooling,
@@ -65,6 +67,8 @@ for ind in indep:
     best_x = []
     best_energy = []
     running_times = []
+
+    # Run though 50 iterations with randomised initial points
     seeds = np.loadtxt("seeds.txt", dtype=int)
     for seed in seeds:
         np.random.seed(seed)
@@ -81,6 +85,7 @@ for ind in indep:
         end = datetime.now()
         running_time = timedelta.total_seconds(end - start)
 
+        # Store relevant data
         best_x.append(sa.best_x)
         best_energy.append(sa.best_energy)
         t_init.append(sa.t_init)
@@ -92,6 +97,8 @@ for ind in indep:
         "t_init": t_init,
         "running_time": running_times
     })
+
+    # Split solution into 2 columns for 2D-SF to facilitate plotting
     if dim == 2:
         x, energy, accept, t = zip(*sa.hist_all)
         xs = np.array(x)
@@ -106,5 +113,6 @@ for ind in indep:
         df_hist = pd.DataFrame(sa.hist_all,
                                columns=["x", "energy", "accept", "t"])
 
+    # Store relevant data in a CSV file
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")
     pd.DataFrame.to_csv(df_hist, DEST + filename + " hist")

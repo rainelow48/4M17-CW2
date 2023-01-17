@@ -27,6 +27,7 @@ elif inv == "alpha2":
 else:
     print("Error with investigating parameter")
 
+# Run through list with varying independent variable
 for ind in indep:
     if inv == "case":
         case = ind
@@ -47,6 +48,7 @@ for ind in indep:
     cooling = COOLING[case[2]]
     dim = DIM[1]
 
+    # Set up correct file name
     if inv == "alpha1" or inv == "alpha2":
         filename = " ".join([
             gen, t_mode, cooling,
@@ -63,6 +65,7 @@ for ind in indep:
     # df_hist = pd.read_csv(DEST + filename + " hist", index_col=0)
     # hist.append(df_hist)
 
+# Conduct analysis over all 50 runs for each set of parameters, storing relevant data
 analysis = []
 for i, df_case_best in enumerate(best):
     be = df_case_best['best_energy']
@@ -82,6 +85,7 @@ for i, df_case_best in enumerate(best):
     ])
     print(i, energy_ave, energy_std, x_best, energy_best)
 
+# Store relevant data in a CSV file
 df_an = pd.DataFrame(np.array(analysis),
                      columns=[
                          "energy_ave", "energy_std", "energy_best", "x_best",

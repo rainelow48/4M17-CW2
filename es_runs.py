@@ -19,19 +19,20 @@ inv = "mu"
 if inv == "case":
     indep = cases
 elif inv == "mu":
-    indep = np.arange(5, 101, 5)
+    indep = np.arange(40, 61, 5)
 elif inv == "l_mul":
     indep = np.arange(5, 11, 1)
 else:
     print("Error with investigating parameter")
 
+# Run through list with varying independent variable
 for ind in indep:
     if inv == "case":
         case = ind
         mu = 20
         l_mul = 7
     elif inv == "mu":
-        case = cases[0]
+        case = cases[5]
         mu = ind
         l_mul = 7
     elif inv == "l_mul":
@@ -47,6 +48,7 @@ for ind in indep:
     dim = DIM[1]
     sf = SF()
 
+    # Set up file name
     filename = " ".join(
         [children_recomb, sigma_recomb, select,
          str(mu),
@@ -58,6 +60,8 @@ for ind in indep:
     best_x = []
     best_energy = []
     running_times = []
+
+    # Run though 50 iterations with randomised initial population
     seeds_50 = np.loadtxt('seeds.txt', dtype=int)
     for i in range(50):
         seed = seeds_50[i]
@@ -73,6 +77,7 @@ for ind in indep:
         end = datetime.now()
         running_time = timedelta.total_seconds(end - start)
 
+        # Store relevant data
         p, bx, be, e_ave = es.best[-1]
         population.append(p)
         best_x.append(bx)
@@ -88,6 +93,7 @@ for ind in indep:
     df_best = pd.DataFrame(
         es.best, columns=["population", "best_x", "best_energy", "ave_energy"])
 
+    # Split solution into 2 columns for 2D-SF to facilitate plotting
     if dim == 2:
         population, parents, parents_energy, parents_sigma = zip(*es.hist)
         ps = np.array([np.array(i).T.ravel() for i in parents])
@@ -98,6 +104,7 @@ for ind in indep:
         es.hist,
         columns=["population", "parents", "parents_energy", "parents_sigma"])
 
+    # Store relevant data in a CSV file
     pd.DataFrame.to_csv(df_runs, DEST + filename + " runs")
     pd.DataFrame.to_csv(df_best, DEST + filename + " best")
     pd.DataFrame.to_csv(df_hist, DEST + filename + " hist")

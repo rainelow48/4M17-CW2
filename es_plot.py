@@ -14,6 +14,7 @@ cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
 
+# Plot average minimum objective and running times for all analysis conducted
 def plot_MO_RT():
     invs = ['case', 'mu']
 
@@ -78,6 +79,7 @@ def plot_MO_RT():
         plt.clf()
 
 
+# Plot average and minimum objective against generations
 def plot_ave_min(params):
     df_best = pd.read_csv(DEST + params + " best", index_col=0)
     x = df_best['population']
@@ -99,11 +101,12 @@ def plot_ave_min(params):
     plt.clf()
 
 
+# 2D-SF
 def func(xx, yy):
     return -xx * np.sin(np.sqrt(np.abs(xx))) - yy * np.sin(np.sqrt(np.abs(yy)))
 
 
-# 2D-SF only
+# Plot population evolution for 2D-SF
 def plot_gens(params, mu):
     df_parents = pd.read_csv(DEST + params + " parents", index_col=0)
     parents = np.array(df_parents)
@@ -148,7 +151,7 @@ def plot_gens(params, mu):
     fig.savefig(FIG_DEST + "ES path " + params,
                 transparent=True,
                 bbox_inches='tight')
-    # fig.clf()
+    fig.clf()
 
 
 def main():
@@ -176,6 +179,7 @@ def main():
     plot_MO_RT()  # Plot minimum objective and running times
     plt.close('all')
 
+    # Plot average and minimum objective against generations
     for case in cases:
         children_recomb = CHILDREN_RECOMB[case[0]]
         sigma_recomb = SIGMA_RECOMB[case[1]]

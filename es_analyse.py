@@ -16,20 +16,21 @@ inv = "mu"
 if inv == "case":
     indep = cases
 elif inv == "mu":
-    indep = np.arange(5, 101, 5)
+    indep = np.arange(40, 61, 5)
 elif inv == "l_mul":
     indep = np.arange(5, 11, 1)
 else:
     print("Error with investigating parameter")
 
 runs = []
+# Run through list with varying independent variable
 for ind in indep:
     if inv == "case":
         case = ind
         mu = 20
         l_mul = 7
     elif inv == "mu":
-        case = cases[0]
+        case = cases[5]
         mu = ind
         l_mul = 7
     elif inv == "l_mul":
@@ -44,6 +45,7 @@ for ind in indep:
     select = SELECT[case[2]]
     dim = DIM[1]  # Dont change!!
 
+    # Set up file name
     filename = " ".join(
         [children_recomb, sigma_recomb, select,
          str(mu),
@@ -53,6 +55,7 @@ for ind in indep:
     df_runs = pd.read_csv(DEST + filename + " runs", index_col=0)
     runs.append(df_runs)
 
+# Conduct analysis over all 50 runs for each set of parameters, storing relevant data
 analysis = []
 for i, df_runs in enumerate(runs):
     p = df_runs['population']
@@ -69,10 +72,11 @@ for i, df_runs in enumerate(runs):
     analysis.append(
         [p_ave, p_std, be_ave, be_std, rt_ave, rt_std, x_best, energy_best])
 
+# Store relevant data in a CSV file
 df_an = pd.DataFrame(np.array(analysis),
                      columns=[
                          "p_ave", "p_std", "be_ave", "be_std", "rt_ave",
                          "rt_std", "x_best", "energy_best"
                      ])
 
-pd.DataFrame.to_csv(df_an, DEST + "Analysis\\" + inv)
+pd.DataFrame.to_csv(df_an, DEST + "Analysis\\" + inv + " opt")

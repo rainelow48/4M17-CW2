@@ -14,6 +14,7 @@ cases = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 1),
          (1, 1, 0), (1, 1, 1)]
 
 
+# Plot average minimum objective and running times for all analysis conducted
 def plot_MO_RT():
     invs = ['case', 'step', 'alpha1', 'alpha2']
 
@@ -91,6 +92,7 @@ def plot_MO_RT():
         plt.clf()
 
 
+# Plot objective and temperature against iterations
 def plot_obj_temp(params):
     df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
     accepted = df_hist[df_hist['accept'] == True]
@@ -112,10 +114,12 @@ def plot_obj_temp(params):
     plt.clf()
 
 
+# 2d-SF
 def func(xx, yy):
     return -xx * np.sin(np.sqrt(np.abs(xx))) - yy * np.sin(np.sqrt(np.abs(yy)))
 
 
+# Plot search trajectory for 2D-SF
 def plot_path(params):
     df_hist = pd.read_csv(DEST + params + " hist", index_col=0)
     accepted = df_hist[df_hist['accept'] == True]

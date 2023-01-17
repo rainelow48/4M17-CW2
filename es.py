@@ -123,12 +123,15 @@ class ES:
             # Check convergence
             self.check_convergence()
 
+    # Generate a feasible point within search area
     def generate_feasible(self):
         return np.random.uniform(self.lower, self.upper, self.dim)
 
+    # Check if point is within search area
     def is_feasible(self, child):
         return np.min(child) > self.lower and np.max(child) < self.upper
 
+    # Sort population, energy, and sigma by increasing energy
     def sort_population(self, population, energy, sigma):
         sorted_ind = np.argsort(energy)
         sorted_population = population[sorted_ind]
@@ -221,11 +224,13 @@ class ES:
             child = self.children_recomb(self.parents)
             child_sigma = self.sigma_recomb(self.parents_sigma)
 
+            # Mutation
             mutate_child, mutate_sigma = self.mutate(child, child_sigma)
 
             self.children.append(mutate_child)
             self.children_sigma.append(mutate_sigma)
 
+        # Update variables
         self.children = np.array(self.children)
         self.children_energy = np.array(self.cost_func(self.children))
         self.children_sigma = np.array(self.children_sigma)

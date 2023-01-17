@@ -106,7 +106,7 @@ class SA:
         self.hist_t.append(self.t)
         self.hist_energy.append(self.current_energy)
 
-        while self.evals < self.evals_max:  # and solution is not improving
+        while self.evals < self.evals_max: 
             # Termination criterion:
             # - No improvement within an entire markov chain at one temperature and
             # - Solution acceptance ratio falling below threshold 1e-3
